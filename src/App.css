@@ -1,38 +1,57 @@
 .App {
   text-align: center;
+  color: #ffffff;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.keyboard-container {
+  position: absolute;
+  color: #ffffff;
+  bottom: 0;
+  padding: 2vw;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
+.keyboard-key, .keyboard-special-key {
+  display: inline-block;
+  font-size: 8vw;
+  border-radius: 15px;
+  background-color: #3c3e3f;
+  cursor: pointer;
+  margin: 0.3vw;
+}
+
+.keyboard-key {
+  width:9vw;
+  height:9vw;
+}
+
+@media screen and (orientation:portrait) {
+  .tile-container {
+    overflow: scroll;
+    max-height: 93vw;
   }
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+@media screen and (orientation:landscape) {
+  .tile-container {
+    overflow: scroll;
+    max-height: 30vw;
+  }
 }
 
-.App-link {
-  color: #61dafb;
+
+.tile {
+  display: inline-block;
+  margin: 0.5vw;
+  border: 2px solid;
+  font-size: 12vw;
+  width:14vw;
+  height: 14vw;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.empty-tile {
+  display: inline-block;
+  margin: 0.5vw;
+  border: 2px solid;
+  width:14vw;
+  height: 14vw;
 }
