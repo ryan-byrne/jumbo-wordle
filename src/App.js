@@ -8,7 +8,19 @@ const getDayDiff = (from, to) =>
   Math.round((from.setHours(0,0,0,0) - to.setHours(0,0,0,0))/864e5)
 
 const getTodaysWord = () =>
-  wordList[getDayDiff(new Date(), new Date(2021, 5, 19))]
+  wordList[getDayDiff(new Date(), new Date(2021, 5, 19))].toUpperCase()
+
+const initialState = {
+  "boardState":["","","","","",""],
+  "evaluations":[null,null,null,null,null,null],
+  "rowIndex":0,
+  "solution":getTodaysWord(),
+  "gameStatus":"IN_PROGRESS",
+  "lastPlayedTs":null,
+  "lastCompletedTs":null,
+  "restoringFromLocalStorage":null,
+  "hardMode":false
+}
 
 /*
 
@@ -19,13 +31,13 @@ const getTodaysWord = () =>
 
 const Tiles = (props) => {
 
-  const prevGuess = props.jumboWordleState.boardState.filter(g=>g!=="")
+  const {boardState, evaluations} = props.jumboWordleState;
 
   return (
     <div className='tile-container'>
-      {prevGuess.map((pg,idx)=>
+      {boardState.filter(g=>g!=="").map((pg,idx)=>
         <div className='tile-row-previous' key={idx}>
-          {pg.split("").map((pgc, cidx)=><div key={cidx} className='tile'>{pgc}</div>)}
+          {pg.split("").map((pgc, cidx)=><div key={cidx} className={`tile ${evaluations[idx][cidx]}`}>{pgc}</div>)}
         </div>
       )}
       <div className='tile-row-guess'>
@@ -34,7 +46,7 @@ const Tiles = (props) => {
         )}
         {Array(5-props.guess.length).fill(0).map((gec,gecidx)=><div key={gecidx} className='tile'></div>)}
       </div>
-      {Array(6-prevGuess.length).fill(0).map((eg,idx)=>
+      {Array(5-boardState.filter(g=>g!=="").length).fill(0).map((eg,idx)=>
         <div className='tile-row-empty' key={idx}>
           {Array(5).fill(0).map((egc,cidx)=>
             <div className='tile' key={cidx}></div>
@@ -53,14 +65,26 @@ const Keyboard = (props) => {
     'ZXCVBNM'
   ]
 
+  const {evaluations, boardState} = props.jumboWordleState;
+
+  const formats = {}
+
+  boardState.map( (prevGuess, idx) =>
+    prevGuess.split("").map( (char, cidx) =>
+      formats[char] = evaluations[idx][cidx]
+    )
+  )
+
+  console.log(formats);
+
   return(
     <div className='keyboard-container'>
       {KeyLayout.map((keyRow,idx)=>
         <div className='keyboard-row' key={idx}>
           {keyRow.split('').map(keyChar=>
-            <div className='keyboard-key' id={keyChar} key={keyChar} onClick={props.handleSelect}>{keyChar}</div>  
+            <div className={`keyboard-key ${formats[keyChar]}`} id={keyChar} key={keyChar} onClick={formats[keyChar]!=='absent'?props.handleSelect:null}>{keyChar}</div>  
           )}
-        </div>  
+        </div>
       )}
       <div>
         <div className='keyboard-special-key' onClick={props.handleDelete}>←</div>
@@ -72,47 +96,32 @@ const Keyboard = (props) => {
 
 function App() {
 
-  const [jumboWordleState, setJumboWordleState] = useState(
-    JSON.parse(window.localStorage.getItem("jumbo-wordle-state"))?
-    JSON.parse(window.localStorage.getItem("jumbo-wordle-state")):
-    {
-    "boardState":["","","","","",""],
-    "evaluations":[null,null,null,null,null,null],
-    "rowIndex":0,
-    "solution":getTodaysWord(),
-    "gameStatus":"IN_PROGRESS",
-    "lastPlayedTs":null,
-    "lastCompletedTs":null,
-    "restoringFromLocalStorage":null,
-    "hardMode":false
-  });
-
+  const [jumboWordleState, setJumboWordleState] = useState(initialState);
   const [guess, setGuess] = useState("");
-  // Check state on initial page load
-  useEffect(()=>{
-    
-    const storedState = JSON.parse(window.localStorage.getItem("jumbo-wordle-state"))
 
-    if (!storedState){
-      window.localStorage.setItem('jumbo-wordle-state', JSON.stringify(jumboWordleState))
-    }
-    else if ( getDayDiff(new Date(), new Date(storedState.lastCompletedTs)) >= 1){
-      // Start new game
-      setJumboWordleState({
+  useEffect(()=>{
+    // Check initial state on page load
+    const storedState = JSON.parse(window.localStorage.getItem("jumbo-wordle-state"));
+  
+    if ( !storedState || storedState.solution !== getTodaysWord() ){
+      setJumboWordleState( jumboWordleState => ({
         ...jumboWordleState,
         "boardState":["","","","","",""],
         "evaluations":[null,null,null,null,null,null],
         "rowIndex":0,
         "solution":getTodaysWord(),
         "gameStatus":"IN_PROGRESS",
-      })
+      }))
     } else {
-      setJumboWordleState(storedState)
+      setJumboWordleState(storedState);
     }
 
   },[])
 
+  useEffect(()=>window.localStorage.setItem("jumbo-wordle-state", JSON.stringify(jumboWordleState)),[jumboWordleState])
+
   const handleEnter = () => {
+    // Check word Validity
     if ( jumboWordleState.rowIndex === 5 ) {
       console.log(`You are out of guesses today`);
     } else if ( guess.length < 5 ) {
@@ -120,20 +129,27 @@ function App() {
     } else if (!checkList.includes(guess.toLowerCase()) & !wordList.includes(guess.toLowerCase())){
       console.log(`${guess} not in Wordlist`);
     } else {
-      var prevGuesses = [...jumboWordleState.boardState];
-      var prevEval = [...jumboWordleState.evaluations];
-      prevGuesses[jumboWordleState.rowIndex] = guess
+      // Word is Valid
+      const {rowIndex, evaluations, boardState, solution} = jumboWordleState;
+
+      boardState[rowIndex] = guess;
+      evaluations[rowIndex] = guess.split("").map( (char, idx) =>
+        char===solution[idx]?"correct":solution.split("").includes(char)?"present":"absent"
+      )
+
       setJumboWordleState({
         ...jumboWordleState,
-        rowIndex:jumboWordleState.rowIndex+1,
-        boardState:prevGuesses
+        boardState:boardState,
+        evaluations:evaluations,
+        rowIndex:rowIndex+1,
+        gameStatus:guess===solution?"WIN":rowIndex===5?"FAIL":"IN_PROGRESS",
+        lastPlayedTs: new Date().getTime(),
+        lastCompletedTs:guess===solution||rowIndex===5?new Date().getTime():null
       })
+
       setGuess("")
-      saveState();
     }
   }
-
-  const saveState = () => window.localStorage.setItem('jumbo-wordle-state', JSON.stringify(jumboWordleState))
 
   const handleDelete = () => guess.length>0 & jumboWordleState.boardState==='IN_PROGRESS'?null:setGuess(guess.slice(0,guess.length-1))
 
@@ -142,7 +158,7 @@ function App() {
   return (
     <div className="App">
       <Tiles {...{jumboWordleState, guess}}/>
-      <Keyboard {...{handleSelect, handleDelete, handleEnter}}/>
+      <Keyboard {...{handleSelect, handleDelete, handleEnter, jumboWordleState}}/>
     </div>
   );
 }
