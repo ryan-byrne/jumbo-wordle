@@ -1,13 +1,13 @@
 {
   "files": {
     "main.css": "/jumbo-wordle/static/css/main.e3ab9be4.css",
-    "main.js": "/jumbo-wordle/static/js/main.2f895e41.js",
+    "main.js": "/jumbo-wordle/static/js/main.1130c031.js",
     "index.html": "/jumbo-wordle/index.html",
     "main.e3ab9be4.css.map": "/jumbo-wordle/static/css/main.e3ab9be4.css.map",
-    "main.2f895e41.js.map": "/jumbo-wordle/static/js/main.2f895e41.js.map"
+    "main.1130c031.js.map": "/jumbo-wordle/static/js/main.1130c031.js.map"
   },
   "entrypoints": [
     "static/css/main.e3ab9be4.css",
-    "static/js/main.2f895e41.js"
+    "static/js/main.1130c031.js"
   ]
 }
