@@ -98,6 +98,16 @@ html {
   height:10vw;
 }
 
+.keyboard-refresh-key {
+  position: absolute;
+  width:9vw;
+  height:9vw;
+  font-size: 6vw;
+  border-radius: 15px;
+  background-color: #3c3e3f;
+  cursor: pointer;
+}
+
 .tile-container {
   overflow-x: hidden;
   overflow-y: scroll;

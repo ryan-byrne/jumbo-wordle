@@ -8,7 +8,7 @@ const getDayDiff = (from, to) =>
   Math.round((from.setHours(0,0,0,0) - to.setHours(0,0,0,0))/864e5)
 
 const getTodaysWord = () =>
-  wordList[getDayDiff(new Date(), new Date(2021, 5, 19))].toUpperCase()
+  wordList[getDayDiff(new Date(), new Date(2021, 5, 18))].toUpperCase()
 
 const initialState = {
   "boardState":["","","","","",""],
@@ -70,12 +70,17 @@ const Keyboard = (props) => {
   const formats = {}
 
   boardState.map( (prevGuess, idx) =>
-    prevGuess.split("").map( (char, cidx) =>
-      formats[char] = evaluations[idx][cidx]
-    )
+    prevGuess.split("").map( (char, cidx) => {
+      if (Object.keys(formats).includes(char)) {
+        return
+      } else {
+        formats[char] = evaluations[idx][cidx]
+      }
+      
+    })
   )
 
-  console.log(formats);
+  const handleRefresh = () => window.location.reload()
 
   return(
     <div className='keyboard-container'>
@@ -87,6 +92,7 @@ const Keyboard = (props) => {
         </div>
       )}
       <div>
+        <div className='keyboard-refresh-key' onClick={handleRefresh}>↺</div>
         <div className='keyboard-special-key' onClick={props.handleDelete}>←</div>
         <div className='keyboard-special-key' onClick={props.handleEnter}>Enter</div>
       </div>
@@ -134,7 +140,7 @@ function App() {
 
       boardState[rowIndex] = guess;
       evaluations[rowIndex] = guess.split("").map( (char, idx) =>
-        char===solution[idx]?"correct":solution.split("").includes(char)?"present":"absent"
+        char===solution[idx]?"correct":solution.substring(idx, solution.length).split("").includes(char)?"present":"absent"
       )
 
       setJumboWordleState({
