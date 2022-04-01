@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import './App.css';
 
+import bugIcon from './img/bug.png';
+
 import wordList from './wordList.json';
 import checkList from './wordList2.json';
 
@@ -69,14 +71,14 @@ const Keyboard = (props) => {
 
   const formats = {}
 
-  boardState.map( (prevGuess, idx) =>
-    prevGuess.split("").map( (char, cidx) => {
-      if (Object.keys(formats).includes(char)) {
+  // Loop through previous guesses
+  boardState.forEach( (prevGuess, idx) =>
+    prevGuess.split("").forEach( (char, cidx) => { // 
+      if (formats[char]==='correct'){
         return
       } else {
         formats[char] = evaluations[idx][cidx]
       }
-      
     })
   )
 
@@ -95,6 +97,11 @@ const Keyboard = (props) => {
         <div className='keyboard-refresh-key' onClick={handleRefresh}>↺</div>
         <div className='keyboard-special-key' onClick={props.handleDelete}>←</div>
         <div className='keyboard-special-key' onClick={props.handleEnter}>Enter</div>
+        <div className='keyboard-bug-key'>
+          <a href="mailto:ryanbyrne142@gmail.com?subject=Jumbo Wordle Bug">
+            <img src={bugIcon} height="60" alt="bug-icon"/>
+          </a>
+        </div>
       </div>
     </div>
   )
@@ -140,7 +147,7 @@ function App() {
 
       boardState[rowIndex] = guess;
       evaluations[rowIndex] = guess.split("").map( (char, idx) =>
-        char===solution[idx]?"correct":solution.substring(idx, solution.length).split("").includes(char)?"present":"absent"
+        char===solution[idx]?"correct":solution.split("").includes(char)?"present":"absent"
       )
 
       setJumboWordleState({

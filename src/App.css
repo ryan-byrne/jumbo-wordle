@@ -84,7 +84,7 @@ html {
   -moz-user-select: none; /*Firefox*/
 }
 
-.keyboard-key, .keyboard-special-key {
+.keyboard-key, .keyboard-special-key, .keyboard-bug-key {
   display: inline-block;
   font-size: 8vw;
   border-radius: 15px;
@@ -106,6 +106,22 @@ html {
   border-radius: 15px;
   background-color: #3c3e3f;
   cursor: pointer;
+}
+
+.keyboard-bug-key {
+  position: absolute;
+  width:9vw;
+  height:9vw;
+  font-size: 6vw;
+  right: 0;
+  border-radius: 15px;
+  background-color: #3c3e3f;
+  cursor: pointer;
+}
+
+.keyboard-bug-key img {
+  padding-top: 15%;
+  height: 70%;
 }
 
 .tile-container {
