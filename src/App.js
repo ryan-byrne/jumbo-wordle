@@ -135,7 +135,7 @@ function App() {
 
   const handleEnter = () => {
     // Check word Validity
-    if ( jumboWordleState.rowIndex === 5 ) {
+    if ( jumboWordleState.rowIndex === 6 ) {
       console.log(`You are out of guesses today`);
     } else if ( guess.length < 5 ) {
       console.log(`${guess} is not long enough`);
