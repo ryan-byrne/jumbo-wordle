@@ -37,24 +37,36 @@ const Tiles = (props) => {
 
   return (
     <div className='tile-container'>
+
+      {/* List out the previous guesses */}
       {boardState.filter(g=>g!=="").map((pg,idx)=>
         <div className='tile-row-previous' key={idx}>
           {pg.split("").map((pgc, cidx)=><div key={cidx} className={`tile ${evaluations[idx][cidx]}`}>{pgc}</div>)}
         </div>
       )}
-      <div className='tile-row-guess'>
-        {props.guess.split("").map( (c,idx) =>
-          <div className='tile' key={idx}>{c}</div>
-        )}
-        {Array(5-props.guess.length).fill(0).map((gec,gecidx)=><div key={gecidx} className='tile'></div>)}
-      </div>
-      {Array(5-boardState.filter(g=>g!=="").length).fill(0).map((eg,idx)=>
-        <div className='tile-row-empty' key={idx}>
-          {Array(5).fill(0).map((egc,cidx)=>
-            <div className='tile' key={cidx}></div>
+
+      {
+        evaluations.filter(e=>e!==null).length === 6 ? null :
+        <div>
+          {/* Row for the current Guess */}
+          <div className='tile-row-guess'>
+            {props.guess.split("").map( (c,idx) =>
+              <div className='tile' key={idx}>{c}</div>
+            )}
+            {Array(5-props.guess.length).fill(0).map((gec,gecidx)=><div key={gecidx} className='tile'></div>)}
+          </div>
+          {/* Empty Rows for future guesses */}
+          {Array(5-boardState.filter(g=>g!=="").length).fill(0).map((eg,idx)=>
+            <div className='tile-row-empty' key={idx}>
+              {Array(5).fill(0).map((egc,cidx)=>
+                <div className='tile' key={cidx}></div>
+              )}
+            </div>
           )}
         </div>
-      )}
+      }
+
+
     </div>
   )
 }
@@ -82,14 +94,14 @@ const Keyboard = (props) => {
     })
   )
 
-  const handleRefresh = () => window.location.reload()
+  const handleRefresh = () => window.location.reload();
 
   return(
     <div className='keyboard-container'>
       {KeyLayout.map((keyRow,idx)=>
         <div className='keyboard-row' key={idx}>
           {keyRow.split('').map(keyChar=>
-            <div className={`keyboard-key ${formats[keyChar]}`} id={keyChar} key={keyChar} onClick={formats[keyChar]!=='absent'?props.handleSelect:null}>{keyChar}</div>  
+            <div className={`keyboard-key ${formats[keyChar]}`} id={keyChar} key={keyChar} onClick={()=>props.handleSelect(keyChar)}>{keyChar}</div>  
           )}
         </div>
       )}
@@ -135,7 +147,7 @@ function App() {
 
   const handleEnter = () => {
     // Check word Validity
-    if ( jumboWordleState.rowIndex === 5 ) {
+    if ( jumboWordleState.rowIndex === 6 ) {
       console.log(`You are out of guesses today`);
     } else if ( guess.length < 5 ) {
       console.log(`${guess} is not long enough`);
@@ -164,9 +176,11 @@ function App() {
     }
   }
 
-  const handleDelete = () => guess.length>0 & jumboWordleState.boardState==='IN_PROGRESS'?null:setGuess(guess.slice(0,guess.length-1))
+  const handleDelete = () => guess.length > 0 & jumboWordleState.boardState==='IN_PROGRESS' ? null : setGuess(guess.slice(0,guess.length-1))
 
-  const handleSelect = (e) => guess.length<5 & jumboWordleState.gameStatus==='IN_PROGRESS'?setGuess(guess.concat(e.target.id)):null
+  const handleSelect = (char) => guess.length < 5 & jumboWordleState.gameStatus==='IN_PROGRESS' ? setGuess(`${guess}${char}`): null;
+
+  console.log(guess);
 
   return (
     <div className="App">
