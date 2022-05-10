@@ -10,7 +10,7 @@ const getDayDiff = (from, to) =>
   Math.round((from.setHours(0,0,0,0) - to.setHours(0,0,0,0))/864e5)
 
 const getTodaysWord = () =>
-  wordList[getDayDiff(new Date(), new Date(2021, 5, 18))].toUpperCase()
+  wordList[getDayDiff(new Date(), new Date(2021, 5, 19))].toUpperCase()
 
 const initialState = {
   "boardState":["","","","","",""],
