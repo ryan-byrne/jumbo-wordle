@@ -7,4 +7,4 @@ RUN npm run build
 COPY package*.json ./
 RUN npm ci
 COPY . .
-CMD [ "node", "index.js"]
+CMD [ "node", "app.js"]
