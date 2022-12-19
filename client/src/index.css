@@ -5,3 +5,8 @@ body {
   -moz-osx-font-smoothing: grayscale;
   background-color: #121213;
 }
+
+#message {
+  text-align: center;
+  color: aliceblue;
+}

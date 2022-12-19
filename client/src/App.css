@@ -84,6 +84,12 @@ html {
   -moz-user-select: none; /*Firefox*/
 }
 
+.keyboard-container {
+  position: absolute;
+  margin: 2vw;
+  bottom: 0;
+}
+
 .keyboard-key, .keyboard-special-key, .keyboard-bug-key {
   display: inline-block;
   font-size: 8vw;
@@ -124,17 +130,6 @@ html {
   height: 70%;
 }
 
-.tile-container {
-  overflow-x: hidden;
-  overflow-y: scroll;
-}
-
-.keyboard-container {
-  position: absolute;
-  margin: 2vw;
-  bottom: 0;
-}
-
 @media screen and (orientation:portrait) {
   .tile-container {
     max-height: 65vh;
@@ -153,23 +148,24 @@ html {
   }
 }
 
-
-.tile {
-  cursor:default;
-  display: inline-block;
-  border: 2px solid white;
-  margin: 1vw;
-  font-size: 12vw;
-  width:14vw;
-  height: 14vw;
+.tile-container {
+  overflow-x: hidden;
+  overflow-y: scroll;
+  padding: 2vw;
 }
 
-.empty-tile {
-  display: inline-block;
-  margin: 0.5vw;
-  border: 2px solid;
-  width:14vw;
-  height: 14vw;
+.tile-row-guess {
+  display: table-row;
+}
+
+.tile {
+  font-size: 20vw;
+  width: 20vw;
+  height: 20vw;
+  display: table-cell;
+  vertical-align: middle;
+  border: 2px solid white;
+  border-radius: 1vw;
 }
 
 .absent {
